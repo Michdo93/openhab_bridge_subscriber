@@ -30,7 +30,7 @@ class ColorSubscriber(object):
         """Handle subscriber data."""
         # Simply print out values in our custom message.
         self.data = data
-        msg = "Received %s with r %s, g %s and b %s" % (self.data.item, self.data.r, self.data.g, self.data.b)
+        msg = "Received %s with hue %s, saturation %s and brightness %s" % (self.data.item, self.data.hue, self.data.saturation, self.data.brightness)
         rospy.loginfo(rospy.get_caller_id() + msg)
 
     def stop(self):
