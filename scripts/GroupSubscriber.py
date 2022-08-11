@@ -30,7 +30,10 @@ class GroupSubscriber(object):
         """Handle subscriber data."""
         # Simply print out values in our custom message.
         self.data = data
-        msg = "Received %s" % (self.data.item)
+        if self.data.isbool == False:
+            msg = "Received %s" % (self.data.item)
+        else:
+            msg = "Received %s with NULL" % self.data.item
         rospy.loginfo(rospy.get_caller_id() + msg)
 
     def stop(self):
