@@ -1,7 +1,7 @@
 #!/usr/bin/python
+import os
 import rospy
-from openhab_msgs.msg import ImageCommand
-import argparse
+from openhab_msgs.msg import ImageState
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 
@@ -10,18 +10,23 @@ import cv2
 
 VERBOSE = False
 
-class ImagePublisher(object):
-    """Node example class."""
+class ImageSubscriber(object):
 
     def __init__(self, item_name):
-
         self.item_name = item_name
-        self.pub = rospy.Publisher("/openhab/items/" + self.item_name + "/command", ImageCommand, queue_size=10)
-        self.rate = rospy.Rate(10) # 10hz
+
+        """Configure subscriber."""
+        # Create a subscriber with appropriate topic, custom message and name of
+        # callback function.
+        self.sub = rospy.Subscriber("/openhab/items/" + self.item_name + "/state", ImageState, self.callback)
 
         # Initialize message variables.
         self.enable = False
-        self.message = None
+        self.data = None
+        self.bridge = CvBridge()
+        self.image = None
+        self.i = 0
+        self.name = "%s_%s_%s.jpeg" % (self.item_name, rospy.Time.now(), self.i)
 
         if self.enable:
             self.start()
@@ -29,55 +34,59 @@ class ImagePublisher(object):
             self.stop()
 
     def start(self):
-        """Turn on publisher."""
         self.enable = True
-        self.pub = rospy.Publisher("/openhab/items/" + self.item_name + "/command", ImageCommand, queue_size=10)
+        self.sub = rospy.Subscriber("/openhab/items/" + self.item_name + "/state", ImageState, self.callback)
 
-        while not rospy.is_shutdown():
+    def callback(self, data):
+        """Handle subscriber data."""
 
-            self.message = ImageCommand()
+        self.data = data
 
-            self.message.command = "Hello World %s" % rospy.get_time()
+        if self.data.isnull == False:
+            msg = "Received %s" % self.data.item
 
-            self.message.isnull = False
+            try:
+                self.image = self.bridge.imgmsg_to_cv2(self.data.state, 'bgr8')
+            except CvBridgeError as e:
+                print(e)
 
-            self.message.header.stamp = rospy.Time.now()
-            self.message.header.frame_id = "/base_link"
-            self.message.item = self.item_name
+            cv2.imshow(str(self.data.item), self.image)
+            cv2.waitKey(25)
 
-            message = "Publishing to %s at %s: command = %s" % (self.message.item, rospy.get_time(), self.message.command)
-            rospy.loginfo(message)
-
-            self.pub.publish(self.message)
-            self.rate.sleep()
+            self.i = self.i + 1
+            cv2.imwrite(self.name, self.image)
+        else:
+            msg = "Received %s with NULL" % self.data.item
+        rospy.loginfo(rospy.get_caller_id() + msg)
 
     def stop(self):
-        """Turn off publisher."""
+        """Turn off subscriber."""
         self.enable = False
-        self.pub.unregister()
+        self.sub.unregister()
 
-# Main function.
-if __name__ == "__main__":
+if __name__ == '__main__':
     # Initialize the node and name it.
-    rospy.init_node("ImagePublisherNode", anonymous=True)
-    # Go to class functions that do all the heavy lifting.
+    node_name = "ImageSubscriberNode"
+    rospy.init_node(node_name, anonymous=True)
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--image", type=str, required=False,
-                        help="Path to image file you want to publish to openHAB. If not given an Image.jpg in your current path is expected. If there is no Image NULL will be published.")
-    args = parser.parse_args()
+    imageSubscriber = ImageSubscriber("testImage")
 
-    image_path = str(args.port)
-
-    if image_path is None:
-        image_path = "Image.jpg"
-
-    imagePublisher = ImagePublisher("testImage")
-
+    # Go to the main loop
     try:
-        imagePublisher.start()
-    except rospy.ROSInterruptException:
-        pass
-    # Allow ROS to go to all callbacks.
-    # spin() simply keeps python from exiting until this node is stopped
-    rospy.spin()
+        imageSubscriber.start()
+        # Wait for messages on topic, go to callback function when new messages arrive.
+        # spin() simply keeps python from exiting until this node is stopped
+        rospy.spin()
+    # Stop with Ctrl + C
+    except KeyboardInterrupt:
+        imageSubscriber.stop()
+
+        nodes = os.popen("rosnode list").readlines()
+        for i in range(len(nodes)):
+            nodes[i] = nodes[i].replace("\n","")
+
+        for node in nodes:
+            os.system("rosnode kill " + node_name)
+
+
+        print("Node stopped")
