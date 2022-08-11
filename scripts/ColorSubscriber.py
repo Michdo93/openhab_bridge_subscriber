@@ -30,10 +30,10 @@ class ColorSubscriber(object):
         """Handle subscriber data."""
         # Simply print out values in our custom message.
         self.data = data
-        if self.data.isbool == True:
+        if self.data.isbool == False:
             msg = "Received %s with hue %s, saturation %s and brightness %s" % (self.data.item, self.data.hue, self.data.saturation, self.data.brightness)
         else:
-            msg = "Received %s with NULL" % self.data.teim
+            msg = "Received %s with NULL" % self.data.item
         rospy.loginfo(rospy.get_caller_id() + msg)
 
     def stop(self):
