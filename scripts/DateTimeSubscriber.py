@@ -30,7 +30,10 @@ class DateTimeSubscriber(object):
         """Handle subscriber data."""
         # Simply print out values in our custom message.
         self.data = data
-        msg = "Received %s with state %s" % (self.data.item, self.data.state)
+        if self.data.isbool == False:
+            msg = "Received %s with state %s" % (self.data.item, self.data.state)
+        else:
+            msg = "Received %s with NULL" % self.data.item
         rospy.loginfo(rospy.get_caller_id() + msg)
 
     def stop(self):
