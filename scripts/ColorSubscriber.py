@@ -15,7 +15,7 @@ class ColorSubscriber(object):
 
         # Initialize message variables.
         self.enable = False
-        self.data = ""
+        self.data = None
 
         if self.enable:
             self.start()
