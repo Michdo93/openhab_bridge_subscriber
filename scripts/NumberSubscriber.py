@@ -15,7 +15,7 @@ class NumberSubscriber(object):
 
         # Initialize message variables.
         self.enable = False
-        self.data = ""
+        self.data = None
 
         if self.enable:
             self.start()
@@ -30,7 +30,7 @@ class NumberSubscriber(object):
         """Handle subscriber data."""
         # Simply print out values in our custom message.
         self.data = data
-        if self.data.isbool == False:
+        if self.data.isnull == False:
             msg = "Received %s with state %s" % (self.data.item, self.data.state)
         else:
             msg = "Received %s with NULL" % self.data.item
