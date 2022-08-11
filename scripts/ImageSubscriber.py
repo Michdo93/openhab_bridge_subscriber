@@ -26,7 +26,7 @@ class ImageSubscriber(object):
         self.bridge = CvBridge()
         self.image = None
         self.i = 0
-        self.name = "%s_%s_%s.jpeg" % (self.item_name, rospy.Time.now(), self.i)
+        self.name = "%s_%s_%s.jpg" % (self.item_name, rospy.Time.now(), self.i)
 
         if self.enable:
             self.start()
