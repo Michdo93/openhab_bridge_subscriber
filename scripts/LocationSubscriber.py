@@ -30,7 +30,10 @@ class LocationSubscriber(object):
         """Handle subscriber data."""
         # Simply print out values in our custom message.
         self.data = data
-        msg = "Received %s with longitude %s, latitude %s and altitude %s" % (self.data.item, self.data.longitude, self.data.latitude, self.data.altitude)
+        if self.data.isbool == False:
+            msg = "Received %s with longitude %s, latitude %s and altitude %s" % (self.data.item, self.data.longitude, self.data.latitude, self.data.altitude)
+        else:
+            msg = "Received %s with NULL" % self.data.item
         rospy.loginfo(rospy.get_caller_id() + msg)
 
     def stop(self):
