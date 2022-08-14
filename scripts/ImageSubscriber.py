@@ -25,8 +25,6 @@ class ImageSubscriber(object):
         self.data = None
         self.bridge = CvBridge()
         self.image = None
-        self.i = 0
-        self.name = "%s_%s_%s.jpg" % (self.item_name, rospy.Time.now(), self.i)
 
         if self.enable:
             self.start()
@@ -52,9 +50,6 @@ class ImageSubscriber(object):
 
             cv2.imshow(str(self.data.item), self.image)
             cv2.waitKey(25)
-
-            self.i = self.i + 1
-            cv2.imwrite(self.name, self.image)
         else:
             msg = "Received %s with NULL" % self.data.item
         rospy.loginfo(rospy.get_caller_id() + msg)
