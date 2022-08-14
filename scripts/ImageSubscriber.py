@@ -48,7 +48,7 @@ class ImageSubscriber(object):
             except CvBridgeError as e:
                 print(e)
 
-            cv2.imshow(str(self.data.item), self.image)
+            cv2.imshow(str(self.item_name), self.image)
             cv2.waitKey(25)
         else:
             msg = "Received %s with NULL" % self.data.item
