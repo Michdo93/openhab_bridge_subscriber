@@ -158,7 +158,7 @@ include_directories(
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-catkin_install_python(PROGRAMS scripts/ColorSubscriber.py scripts/ContactSubscriber.py scripts/DateTimeSubscriber.py scripts/DimmerSubscriber.py scripts/GroupSubscriber.py scripts/ImageSubscriber.py scripts/LocationSubscriber.py scripts/NumberSubscriber.py scripts/RollershutterSubscriber.py scripts/StringSubscriber.py scripts/SwitchSubscriber.py
+catkin_install_python(PROGRAMS scripts/ColorSubscriber.py scripts/ContactSubscriber.py scripts/DateTimeSubscriber.py scripts/DimmerSubscriber.py scripts/GroupSubscriber.py scripts/ImageSaver.py scripts/ImageSubscriber.py scripts/LocationSubscriber.py scripts/NumberSubscriber.py scripts/RollershutterSubscriber.py scripts/StringSubscriber.py scripts/SwitchSubscriber.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
